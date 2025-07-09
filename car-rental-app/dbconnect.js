@@ -7,7 +7,7 @@ db.exec(`
     title TEXT NOT NULL,
     description TEXT,
     location TEXT,
-    status TEXT DEFAULT 'pending',
+    status TEXT DEFAULT 'rejected',
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
   )
 `);
@@ -46,16 +46,16 @@ const insertListing = db.prepare(`
 `);
 
 const dummyListings = [
-  { title: 'Car A', description: 'Compact car', location: 'Delhi', status: 'pending' },
+  { title: 'Car A', description: 'Compact car', location: 'Delhi', status: 'rejected' },
   { title: 'Car B', description: 'SUV for rent', location: 'Mumbai', status: 'approved' },
   { title: 'Car C', description: 'Sedan with driver', location: 'Bangalore', status: 'rejected' },
   { title: 'Car D', description: 'Luxury ride', location: 'Chennai', status: 'approved' },
-  { title: 'Car E', description: 'Budget friendly', location: 'Hyderabad', status: 'pending' },
+  { title: 'Car E', description: 'Budget friendly', location: 'Hyderabad', status: 'rejected' },
   { title: 'Car F', description: 'SUV for family trips', location: 'Pune', status: 'approved' },
-  { title: 'Car G', description: 'Electric vehicle', location: 'Ahmedabad', status: 'pending' },
+  { title: 'Car G', description: 'Electric vehicle', location: 'Ahmedabad', status: 'rejected' },
   { title: 'Car H', description: 'Convertible car', location: 'Jaipur', status: 'rejected' },
   { title: 'Car I', description: 'Car with sunroof', location: 'Kolkata', status: 'approved' },
-  { title: 'Car J', description: 'Vintage car', location: 'Goa', status: 'pending' }
+  { title: 'Car J', description: 'Vintage car', location: 'Goa', status: 'rejected' }
 ];
 
 const insertManyListings = db.transaction((listings) => {
