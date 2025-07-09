@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation';
+import Router from 'next/router';
 import React, { useState } from 'react'
 
 function index() {
@@ -23,6 +25,7 @@ function index() {
     console.log('Response data:', data);
     
     if (data.success) {
+      Router.push('/listing');
       console.log('Login successful:', data.user);
     } else {
       console.error('Login failed:', data.error);
