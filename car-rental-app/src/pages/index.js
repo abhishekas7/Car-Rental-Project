@@ -1,6 +1,33 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 function index() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async (e) => {
+    console.log('Form submitted with:', { email, password });
+    
+   e.preventDefault();
+   console.log('Handling form submission...');
+   
+    const response = await fetch('/api/auth', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+    console.log("dsd");
+    
+    const data = await response.json();
+    console.log('Response data:', data);
+    
+    if (data.success) {
+      console.log('Login successful:', data.user);
+    } else {
+      console.error('Login failed:', data.error);
+    }
+  };
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 mt-20">
@@ -11,7 +38,7 @@ function index() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action="#" method="POST" className="space-y-6">
+          <form onSubmit={handleSubmit} method="POST" className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
                 Email address
@@ -20,9 +47,11 @@ function index() {
                 <input
                   id="email"
                   name="email"
-                  type="email"
-                  required
+                  type="text"
+                  // required
                   autoComplete="email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                 />
               </div>
@@ -41,6 +70,8 @@ function index() {
                   type="password"
                   required
                   autoComplete="current-password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                 />
               </div>
