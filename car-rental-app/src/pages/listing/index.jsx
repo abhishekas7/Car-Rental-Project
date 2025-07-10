@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BiSolidCheckCircle } from "react-icons/bi";
+import { MdOutlineEdit } from "react-icons/md";
 
 function index() {
   const [listings, setListings] = useState([]);
@@ -37,6 +38,10 @@ function index() {
       console.error('Error updating status:', error);
     }
   };
+
+  const EditCarDetails = () =>{
+    
+  }
   
 
   return (
@@ -86,8 +91,10 @@ function index() {
                         </p>
                       </div>
                     </div>
-                    <div className="col-span-2">
-                    <button
+                    <div className="col-span-2 grid-cols-4">
+<div className="flex justify-around">
+<div className="mt-[25px]">
+<button
   onClick={() =>
     onHandleChangeStatus(
       item.id,
@@ -102,7 +109,11 @@ function index() {
 >
   {item.status === "rejected" ? "Approve" : "Reject"}
 </button>
-
+</div>
+<div>
+<MdOutlineEdit size={24} color="grey" onClick={()=>{EditCarDetails()}}/>
+  </div>
+  </div>
                     </div>
                   </div>
                 </div>

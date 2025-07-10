@@ -31,7 +31,7 @@ const insertUser = db.prepare(`
 `);
 
 const dummyUsers = [
-  { name: 'rahul', email: 'rahule@example.com', password: 'hashed_pw_1', role: 'admin' },
+  { name: 'rahul', email: 'alice@example.com', password: 'hashed_pw_1', role: 'admin' },
 ];
 
 const insertManyUsers = db.transaction((users) => {
