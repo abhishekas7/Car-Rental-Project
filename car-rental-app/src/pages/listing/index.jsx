@@ -1,9 +1,13 @@
+import SideModalForm from "@/components/SideModalForm";
 import React, { useEffect, useState } from "react";
 import { BiSolidCheckCircle } from "react-icons/bi";
 import { MdOutlineEdit } from "react-icons/md";
 
 function index() {
   const [listings, setListings] = useState([]);
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectedListing, setSelectedListing] = useState(null);
 
   useEffect(() => {
     fetch("/api/listing/listing")
@@ -15,41 +19,55 @@ function index() {
 
   const onHandleChangeStatus = async (itemid, itemstatus) => {
     try {
-      const res = await fetch('/api/listing/status', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/listing/status", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: itemid, status: itemstatus }),
       });
-  
+
       const data = await res.json();
-  
+
       if (data.success) {
         setListings((prevListings) =>
           prevListings.map((listing) =>
-            listing.id === itemid
-              ? { ...listing, status: itemstatus }
-              : listing
+            listing.id === itemid ? { ...listing, status: itemstatus } : listing
           )
         );
       } else {
-        console.error('Update failed:', data.error);
+        console.error("Update failed:", data.error);
       }
     } catch (error) {
-      console.error('Error updating status:', error);
+      console.error("Error updating status:", error);
     }
   };
 
-  const EditCarDetails = () =>{
-    
-  }
-  
+  const EditCarDetails = (id) => {
+    const selected = listings.find((item) => item.id === id);
+    setSelectedListing(selected);
+    setShowModal(true);
+  };
+
+  const onHandleEditCarDetails = async (updatedData) => {
+    await fetch(`/api/listing/${selectedListing.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedData),
+    });
+    setShowModal(false);
+    setSelectedListing(null);
+    setListings((prevListings) =>
+      prevListings.map((listing) =>
+        listing.id === selectedListing.id
+          ? { ...listing, ...updatedData }
+          : listing
+      )
+    );
+  };
 
   return (
-    // <div>{JSON.stringify(listings)}</div>
     <>
       <div className="w-[1400px] mx-auto">
         <h3 className="text-2xl font-bold mt-4 mb-4">Listings</h3>
-
         <div className="grid grid-cols-2 gap-4">
           {listings.map((item, index) => (
             <div
@@ -74,7 +92,7 @@ function index() {
                           Location: {item.location}
                         </p>
                         <p className="text-gray-500 text-sm mt-1">
-                         {item.status ===  "rejected" ? (
+                          {item.status === "rejected" ? (
                             <span className="text-red-500">
                               <BiSolidCheckCircle className="inline-block mr-1" />
                               {item.status}
@@ -92,28 +110,36 @@ function index() {
                       </div>
                     </div>
                     <div className="col-span-2 grid-cols-4">
-<div className="flex justify-around">
-<div className="mt-[25px]">
-<button
-  onClick={() =>
-    onHandleChangeStatus(
-      item.id,
-      item.status === "rejected" ? "approved" : "rejected"
-    )
-  }
-  className={
-    item.status === "rejected"
-      ? "bg-green-500 text-white px-4 py-2 rounded w-[100px]"
-      : "bg-red-500 text-white px-4 py-2 rounded w-[100px]"
-  }
->
-  {item.status === "rejected" ? "Approve" : "Reject"}
-</button>
-</div>
-<div>
-<MdOutlineEdit size={24} color="grey" onClick={()=>{EditCarDetails()}}/>
-  </div>
-  </div>
+                      <div className="flex justify-around">
+                        <div className="mt-[25px]">
+                          <button
+                            onClick={() =>
+                              onHandleChangeStatus(
+                                item.id,
+                                item.status === "rejected"
+                                  ? "approved"
+                                  : "rejected"
+                              )
+                            }
+                            className={
+                              item.status === "rejected"
+                                ? "bg-green-500 text-white px-4 py-2 rounded w-[100px]"
+                                : "bg-red-500 text-white px-4 py-2 rounded w-[100px]"
+                            }
+                          >
+                            {item.status === "rejected" ? "Approve" : "Reject"}
+                          </button>
+                        </div>
+                        <div>
+                          <MdOutlineEdit
+                            size={24}
+                            color="grey"
+                            onClick={() => {
+                              EditCarDetails(item.id);
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -122,6 +148,16 @@ function index() {
           ))}
         </div>
       </div>
+      {showModal && (
+        <div className="absolute w-3xl">
+          <SideModalForm
+            listing={selectedListing}
+            onSubmit={(formData) => {
+              onHandleEditCarDetails(formData);
+            }}
+          />
+        </div>
+      )}
     </>
   );
 }

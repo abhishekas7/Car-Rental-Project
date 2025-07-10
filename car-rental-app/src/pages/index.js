@@ -19,10 +19,8 @@ function index() {
       },
       body: JSON.stringify({ email, password }),
     });
-    console.log("dsd");
     
     const data = await response.json();
-    console.log('Response data:', data);
     
     if (data.success) {
       Router.push('/listing');
