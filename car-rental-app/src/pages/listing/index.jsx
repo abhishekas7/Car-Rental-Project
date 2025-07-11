@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { BiSolidCheckCircle } from "react-icons/bi";
 import { MdOutlineEdit } from "react-icons/md";
 import { useRouter } from "next/router";
+import { parse } from 'cookie';
 
 function Index({ carlistings, pagination }) {
   const router = useRouter();
@@ -20,6 +21,8 @@ function Index({ carlistings, pagination }) {
     setListings(carlistings);
     setTotalPages(pagination.totalPages);
   }, [carlistings, pagination.totalPages]);
+
+  
 
   const onHandleChangeStatus = async (itemid, itemstatus) => {
     try {
@@ -205,8 +208,21 @@ function Index({ carlistings, pagination }) {
 export default Index;
 
 export async function getServerSideProps(context) {
+  const { req, query } = context;
   const { page = 1, status = "all" } = context.query;
   const limit = 5;
+
+  const cookies = parse(req.headers.cookie || '');
+  const token = cookies.token;
+
+  if (token !== 'valid_admin_token') {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
 
   const res = await fetch(`http://localhost:3001/api/listing/listing?page=${page}&limit=${limit}&status=${status}`);
   const data = await res.json();
