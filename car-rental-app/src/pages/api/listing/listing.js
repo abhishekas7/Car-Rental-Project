@@ -8,26 +8,34 @@ export default function handler(req, res) {
   const db = new Database('carrentalservices.db');
 
   try {
-    const page = parseInt(req.query.page || '1');
-    const limit = parseInt(req.query.limit || '5');
-    const offset = (page - 1) * limit;
+const { page = 1, limit = 10, status = 'all' } = req.query;
+const offset = (page - 1) * limit;
 
-    const listings = db
-      .prepare('SELECT * FROM table_listings ORDER BY created_at DESC LIMIT ? OFFSET ?')
-      .all(limit, offset);
+let query = 'SELECT * FROM table_listings';
+let countQuery = 'SELECT COUNT(*) as count FROM table_listings';
+const params = [];
 
-    const total = db.prepare('SELECT COUNT(*) AS count FROM table_listings').get().count;
+if (status !== 'all') {
+  query += ' WHERE status = ?';
+  countQuery += ' WHERE status = ?';
+  params.push(status);
+}
 
-    res.status(200).json({
-      success: true,
-      data: listings,
-      pagination: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    });
+query += ' LIMIT ? OFFSET ?';
+params.push(Number(limit), Number(offset));
+
+const listings = db.prepare(query).all(...params);
+const total = db.prepare(countQuery).get(...params.slice(0, params.length - 2)).count;
+
+return res.status(200).json({
+  success: true,
+  data: listings,
+  pagination: {
+    page: Number(page),
+    totalPages: Math.ceil(total / limit),
+  },
+});
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {

@@ -9,6 +9,8 @@ function Index({ carlistings, pagination }) {
   const page = parseInt(router.query.page || pagination.page || 1);
   const [listings, setListings] = useState(carlistings);
   const [totalPages, setTotalPages] = useState(pagination.totalPages);
+  const [statusFilter, setStatusFilter] = useState(router.query.status || "all");
+
 
   const [showModal, setShowModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState(null);
@@ -67,13 +69,39 @@ function Index({ carlistings, pagination }) {
   };
 
   const goToPage = (newPage) => {
-    router.push(`/listing?page=${newPage}`);
+    router.push({
+      pathname: "/listing",
+      query: {
+        page: newPage,
+        status: statusFilter,
+      },
+    });
   };
+  
 
   return (
     <>
       <div className="w-[1400px] mx-auto">
         <h3 className="text-2xl font-bold mt-4 mb-4">Cars Listings</h3>
+        <div className="mb-5">
+        <select
+  value={statusFilter}
+  onChange={(e) => {
+    const newStatus = e.target.value;
+    setStatusFilter(newStatus);
+    router.push({
+      pathname: "/listing",
+      query: { page: 1, status: newStatus },
+    });
+  }}
+  className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+>
+  <option value="all">All</option>
+  <option value="approved">Approved</option>
+  <option value="rejected">Rejected</option>
+</select>
+
+</div>
 
         <div className="grid grid-cols-2 gap-4">
           {listings.map((item, index) => (
@@ -177,10 +205,10 @@ function Index({ carlistings, pagination }) {
 export default Index;
 
 export async function getServerSideProps(context) {
-  const { page = 1 } = context.query;
+  const { page = 1, status = "all" } = context.query;
   const limit = 5;
 
-  const res = await fetch(`http://localhost:3001/api/listing/listing?page=${page}&limit=${limit}`);
+  const res = await fetch(`http://localhost:3001/api/listing/listing?page=${page}&limit=${limit}&status=${status}`);
   const data = await res.json();
 
   return {
@@ -190,3 +218,4 @@ export async function getServerSideProps(context) {
     },
   };
 }
+
