@@ -3,19 +3,14 @@ import React, { useEffect, useState } from "react";
 import { BiSolidCheckCircle } from "react-icons/bi";
 import { MdOutlineEdit } from "react-icons/md";
 
-function index() {
-  const [listings, setListings] = useState([]);
+function index({carlistings}) {
+  
+  const [listings, setListings] = useState(carlistings);
 
   const [showModal, setShowModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState(null);
 
-  useEffect(() => {
-    fetch("/api/listing/listing")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) setListings(data.data);
-      });
-  }, []);
+
 
   const onHandleChangeStatus = async (itemid, itemstatus) => {
     try {
@@ -67,12 +62,12 @@ function index() {
   return (
     <>
       <div className="w-[1400px] mx-auto">
-        <h3 className="text-2xl font-bold mt-4 mb-4">Listings</h3>
+        <h3 className="text-2xl font-bold mt-4 mb-4"> Cars Listings</h3>
         <div className="grid grid-cols-2 gap-4">
           {listings.map((item, index) => (
             <div
               key={index}
-              className="border border-gray-200 rounded-lg p-4 mb-4"
+              className="border border-gray-200 hover:border-amber-400 rounded-lg p-4 mb-4"
             >
               <div className="grid grid-cols-12 gap-4">
                 <div className="col-span-2">
@@ -88,6 +83,8 @@ function index() {
                     <div className="col-span-4">
                       <div>
                         <h4 className="text-lg font-semibold">{item.title}</h4>
+                                                <p className="text-md ">{item.description}</p>
+
                         <p className="text-gray-600">
                           Location: {item.location}
                         </p>
@@ -163,3 +160,15 @@ function index() {
 }
 
 export default index;
+
+export async function getServerSideProps() {
+  const res = await fetch("http://localhost:3001/api/listing/listing");
+  const data = await res.json();
+console.log(data);
+
+  return {
+    props: {
+      carlistings: data.success ? data.data : [],
+    },
+  };
+}

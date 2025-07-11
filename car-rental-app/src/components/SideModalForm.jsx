@@ -22,7 +22,7 @@ function SideModalForm({ listing = {}, onSubmit }) {
 
 
   return (
-    <div className="fixed top-0 right-0 z-[1000] h-full w-[450px] shadow-lg transition-transform transform translate-x-0 p-5 rounded-2xl bg-zinc-200 border-l-4 border-indigo-600">
+    <div className="fixed top-0 right-0 z-[1000] h-full w-[450px] shadow-lg transition-transform transform translate-x-0 p-5 rounded-2xl bg-white border-l-4 border-amber-400">
       <div>
         <h3 className="font-sans text-2xl mb-4">Edit Car Details</h3>
         <form className="space-y-6" method="POST" onSubmit={handleSubmit}>
@@ -70,7 +70,7 @@ function SideModalForm({ listing = {}, onSubmit }) {
 
           <button
            
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-400 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Save Changes
           </button>

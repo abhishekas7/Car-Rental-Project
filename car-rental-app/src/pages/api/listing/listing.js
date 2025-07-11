@@ -1,6 +1,8 @@
 import Database from 'better-sqlite3';
 
 export default function handler(req, res) {
+  console.log("dd");
+  
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }

@@ -6,12 +6,8 @@ function index() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = async (e) => {
-    console.log('Form submitted with:', { email, password });
-    
+  const handleSubmit = async (e) => {    
    e.preventDefault();
-   console.log('Handling form submission...');
-   
     const response = await fetch('/api/auth', {
       method: 'POST',
       headers: {
